@@ -1,19 +1,42 @@
 <script setup>
+import { defineProps, ref } from 'vue';
+
 const props = defineProps(["tasks"]);
+const editingIndex = ref(null);
+const editedTaskTitle = ref('');
+
+const editTask = (index) => {
+  editingIndex.value = index;
+  editedTaskTitle.value = props.tasks[index].title; 
+};
+
+const saveTask = (index) => {
+  props.tasks[index].title = editedTaskTitle.value; 
+  editingIndex.value = null; 
+};
+
+const deleteTask = (index) => {
+  props.tasks.splice(index, 1);
+};
 </script>
 
+
+
+
 <template>
-  <ul class="mt-4 list-group">
-    <li class="list-group-item" v-for="task in props.tasks">
-      <input
-        @change="(event) => (task.finished = event.target.checked)"
-        :checked="task.finished"
-        :id="task.title"
-        type="checkbox"
-      />
-      <label :class="{ done: task.finished }" :for="task.title" class="ms-3">{{ task.title }}</label>
-    </li>
-  </ul>
+ <ul class="mt-4 list-group">
+  <li class="list-group-item" v-for="(task, index) in props.tasks" :key="task.id">
+    <input
+      @change="(event) => (task.finished = event.target.checked)"
+      :checked="task.finished"
+      :id="task.id"
+      type="checkbox"
+    />
+    <label :class="{ done: task.finished }" :for="task.id" class="ms-3">{{ task.title }}</label>
+    <button @click="editTask(index)" class="btn btn-sm btn-primary mx-2">Edit</button>
+    <button @click="deleteTask(index)" class="btn btn-sm btn-danger">Delete</button>
+  </li>
+</ul>
 </template>
 
 <style scoped>

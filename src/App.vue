@@ -9,17 +9,10 @@ const state = reactive({
   filter: "todas",
   tasks: [
     {
-      title: "Estudar SASS",
-      finished: false,
-    },
-    {
-      title: "Estudar Vue",
-      finished: false,
-    },
-    {
-      title: "Ir á academia",
+      title: "",
       finished: true,
     },
+
   ],
 });
 
@@ -35,9 +28,9 @@ const getFilterTasks = () => {
   const { filter } = state;
 
   switch (filter) {
-    case "pendentes":
+    case "Undone":
       return getTasks();
-    case "finalizadas":
+    case "Done":
       return getTaskFinished();
     default:
       return state.tasks;
@@ -67,3 +60,15 @@ const registerTask = () => {
     <List :tasks="getFilterTasks()" />
   </div>
 </template>
+
+<style>
+.container {
+  margin: 0;
+  padding: 0;
+  background-image: url('assets\bgcute.png');
+  background-size: cover;
+  background-position: center;
+  width: 100vw;
+  height: 100vh;
+}
+</style>

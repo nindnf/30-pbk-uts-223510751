@@ -1,0 +1,16 @@
+.main {
+  margin: 0;
+  padding: 0;
+  background-image: url('assets\bgcute.png'); 
+  background-size: cover;
+  background-position: left;
+  background-repeat: no-repeat;
+  width: 100vw;
+  height: 100vh;
+}
+
+.container {
+    background-image: url('assets\bgcute.png');
+    background-size: cover;
+    background-position: center;
+  }
