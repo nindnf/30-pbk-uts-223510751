@@ -1,10 +1,17 @@
 <script setup>
-const props = defineProps([
-  "registerTask",
-  "tempTask",
-  "changeFilter",
-  "editTempTask",
-]);
+
+const props = defineProps({
+  registerTask: Function,
+  tempTask: String,
+  changeFilter: Function,
+  editTempTask: Function,
+});
+
+const inputTask = ref(props.tempTask);
+
+watch(() => props.tempTask, (newTask) => {
+  inputTask.value = newTask;
+});
 </script>
 
 <template>
@@ -12,10 +19,10 @@ const props = defineProps([
     <div class="row">
       <div class="col">
         <input
-          :value="props.tempTask"
-          @change="props.editTempTask"
+          :value="inputTask"
+          @input="props.editTempTask"
           type="text"
-          placeholder=""
+          placeholder="Tambahkan tugas"
           class="form-control"
           required
         />
@@ -33,3 +40,33 @@ const props = defineProps([
     </div>
   </form>
 </template>
+
+<style scoped>
+.row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.col {
+  flex: 1;
+}
+
+.col-md-2 {
+  flex: 0 0 16.6667%;
+  max-width: 16.6667%;
+  margin-right: 10px;
+}
+
+.form-control {
+  width: 100%;
+}
+
+.btn {
+  width: 100%;
+}
+</style>
+
+
+
+
