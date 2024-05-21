@@ -1,26 +1,10 @@
-<script setup>
-
-const props = defineProps({
-  registerTask: Function,
-  tempTask: String,
-  changeFilter: Function,
-  editTempTask: Function,
-});
-
-const inputTask = ref(props.tempTask);
-
-watch(() => props.tempTask, (newTask) => {
-  inputTask.value = newTask;
-});
-</script>
-
 <template>
-  <form @submit.prevent="props.registerTask">
+  <form @submit.prevent="handleSubmit">
     <div class="row">
       <div class="col">
         <input
-          :value="inputTask"
-          @input="props.editTempTask"
+          :value="tempTask"
+          @input="handleInput"
           type="text"
           placeholder="Tambahkan tugas"
           class="form-control"
@@ -31,8 +15,8 @@ watch(() => props.tempTask, (newTask) => {
         <button type="submit" class="btn btn-primary">Add To Do</button>
       </div>
       <div class="col-md-2">
-        <select class="form-control" @change="props.changeFilter">
-          <option value="todas">All</option>
+        <select class="form-control" @change="handleChangeFilter">
+          <option value="todos">All</option>
           <option value="Undone">Undone</option>
           <option value="Done">Done</option>
         </select>
@@ -41,11 +25,40 @@ watch(() => props.tempTask, (newTask) => {
   </form>
 </template>
 
+<script setup>
+import { defineProps, defineEmits } from 'vue';
+
+// Definisikan props yang diterima oleh komponen
+const props = defineProps({
+  tempTask: String,
+  editTempTask: Function
+});
+
+// Definisikan emit untuk mengakses event yang diperlukan
+const { emit } = defineEmits(['taskAdded']);
+
+// Fungsi untuk menangani submit form
+const handleSubmit = () => {
+  // Panggil emit untuk melemparkan event taskAdded
+  emit('taskAdded', props.tempTask);
+};
+
+// Fungsi untuk menangani perubahan input
+const handleInput = (event) => {
+  // Panggil properti editTempTask jika tersedia
+  if (typeof props.editTempTask === 'function') {
+    props.editTempTask(event.target.value);
+  }
+};
+</script>
+
+
+
 <style scoped>
 .row {
   display: flex;
   align-items: center;
-  margin-bottom: 10px;
+  margin-bottom: 20px; /* Increase margin for better spacing */
 }
 
 .col {
@@ -53,9 +66,9 @@ watch(() => props.tempTask, (newTask) => {
 }
 
 .col-md-2 {
-  flex: 0 0 16.6667%;
-  max-width: 16.6667%;
-  margin-right: 10px;
+  flex: 0 0 25%; /* Increase the width of the form elements */
+  max-width: 25%; /* Adjust max-width accordingly */
+  margin-right: 20px; /* Increase right margin for better spacing */
 }
 
 .form-control {
@@ -66,7 +79,3 @@ watch(() => props.tempTask, (newTask) => {
   width: 100%;
 }
 </style>
-
-
-
-

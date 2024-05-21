@@ -1,9 +1,11 @@
 <script setup>
-import { defineProps, ref } from 'vue';
+import { defineProps, defineEmits, ref } from 'vue';
 
 const props = defineProps(["tasks"]);
 const editingIndex = ref(null);
 const editedTaskTitle = ref('');
+
+const { emit } = defineEmits(['taskEdited', 'taskDeleted']); // Menambahkan event 'taskEdited' dan 'taskDeleted'
 
 const editTask = (index) => {
   editingIndex.value = index;
@@ -11,12 +13,21 @@ const editTask = (index) => {
 };
 
 const saveTask = (index) => {
-  props.tasks[index].title = editedTaskTitle.value; 
-  editingIndex.value = null; 
+  if (index >= 0 && index < props.tasks.length) { // Memastikan indeks valid
+    props.tasks[index].title = editedTaskTitle.value; 
+    editingIndex.value = null; 
+    emit('taskEdited', props.tasks[index]);
+  }
+};
+
+const cancelEdit = () => {
+  editingIndex.value = null;
 };
 
 const deleteTask = (index) => {
-  props.tasks.splice(index, 1);
+  if (index >= 0 && index < props.tasks.length) { // Memastikan indeks valid
+    emit('taskDeleted', props.tasks[index]);
+  }
 };
 </script>
 
@@ -30,7 +41,7 @@ const deleteTask = (index) => {
       type="checkbox"
     />
     <!-- Tampilkan input teks saat sedang dalam mode pengeditan -->
-    <template v-if="editingIndex === index">
+    <template v-if="editingIndex.value === index">
       <input
         v-model="editedTaskTitle"
         @keyup.enter="saveTask(index)"
