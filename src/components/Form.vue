@@ -53,8 +53,8 @@ watch(() => props.tempTask, (newTask) => {
 }
 
 .col-md-2 {
-  flex: 0 0 25%; /* Perbesar lebar kolom menjadi 25% */
-  max-width: 25%; /* Sesuaikan max-width */
+  flex: 0 0 16.6667%;
+  max-width: 16.6667%;
   margin-right: 10px;
 }
 
@@ -66,3 +66,7 @@ watch(() => props.tempTask, (newTask) => {
   width: 100%;
 }
 </style>
+
+
+
+
