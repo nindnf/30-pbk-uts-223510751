@@ -1,68 +1,53 @@
 <template>
   <div class="container">
     <!-- Tombol untuk menampilkan/menyembunyikan postingan -->
-    <button @click="toggleShowingPosts" class="btn primary">
-      {{ showingPosts ? 'Sembunyikan Postingan' : 'Tampilkan Postingan' }}
-    </button>
+    <button @click="toggleShowingPosts">Tampilkan Postingan</button>
     <!-- Tombol untuk menambahkan tugas -->
-    <button @click="toggleShowingTodos" class="btn secondary">
-      {{ showingTodos ? 'Sembunyikan Todo' : 'Tampilkan Todo' }}
-    </button>
+    <button @click="showAddTodoForm = true">Tambahkan Todo</button>
 
     <!-- Jika tombol "Tampilkan Postingan" diklik -->
-    <div v-if="showingPosts" class="posts-container">
+    <div v-if="showingPosts">
       <!-- Select untuk memilih pengguna -->
       <select v-model="selectedUser">
         <option value="">Pilih Pengguna</option>
         <option v-for="user in users" :key="user.id" :value="user.id">{{ user.name }}</option>
       </select>
-
+      
       <!-- List postingan -->
-      <ul v-if="selectedUser" class="post-list">
-        <li v-for="post in userPosts" :key="post.id" class="post-item">{{ post.title }}</li>
+      <ul v-if="selectedUser">
+        <li v-for="post in userPosts" :key="post.id">{{ post.title }}</li>
       </ul>
     </div>
 
     <!-- Komponen Form untuk menambahkan todo -->
-    <component :is="showAddTodoForm ? Form : ''" @submit="handleSubmit" />
+    <Form v-if="showAddTodoForm" @submit="handleSubmit" />
 
-    <div>
-    <Form :tempTask="tempTask" :editTempTask="editTempTask" />
-  </div>
-  <div>
-<!-- Komponen List -->
-<List :tasks="tasks" />
-</div>
-  </div>
+    <!-- Todo yang sedang diinputkan oleh pengguna -->
+    <div v-if="showAddTodoForm">
+      <h3>Todo Baru:</h3>
+      <p>{{ tempTodo }}</p>
+    </div>
 
-<Header />
+    <!-- Komponen List untuk menampilkan daftar todo -->
+    <List :todos="todos" />
+  </div>
 </template>
 
 <script setup>
 import { ref, watch } from 'vue';
+import Header from './components/Header.vue';// Memastikan Header diimpor
 import Form from './components/Form.vue';
-import List from './components/List.vue'
-import Header from './components/Header.vue'; 
+import List from './components/List.vue';
 
 // State
 const users = ref([]);
 const selectedUser = ref("");
 const userPosts = ref([]);
 const showingPosts = ref(false);
-const showAddTodoForm = ref(false);
-const todos = ref([]);
-const tempTodo = ref("");
-const showingTodos = ref(false);
-const tempTask = ref('');
+const showAddTodoForm = ref(false); // Menyimpan status tampilan Form
+const todos = ref([]); // Menyimpan daftar todo
+const tempTodo = ref(""); // Menyimpan todo sementara yang diinputkan oleh pengguna
 
-// Fungsi untuk menambahkan tugas ke dalam tasks
-const handleTaskAdded = (task) => {
-  tasks.value.push(task);
-};
-
-const editTempTask = (value) => {
-  tempTask.value = value;
-};
 // Methods
 const fetchUsers = async () => {
   try {
@@ -90,47 +75,32 @@ const toggleShowingPosts = () => {
   }
 };
 
-const openAddTodoForm = () => {
-  showAddTodoForm.value = true;
-};
-
-const handleSubmit = async () => {
-  try {
-    // Example of handling form submission
-    const response = await fetch('https://jsonplaceholder.typicode.com/todos', {
-      method: 'POST',
-      body: JSON.stringify({
-        userId: selectedUser.value,
-        title: tempTodo.value,
-        completed: false // You can change this value as needed
-      }),
-      headers: {
-        'Content-type': 'application/json; charset=UTF-8',
-      },
-    });
-    const data = await response.json();
-    console.log('Todo added:', data);
-    
-    // Clear the temporary todo after submission
-    tempTodo.value = '';
-  } catch (error) {
-    console.error('Error adding todo:', error);
-  }
-};
-
-const toggleShowingTodos = () => {
-  showAddTodoForm.value = !showAddTodoForm.value; // Toggle nilai showAddTodoForm
-};
-
 // Watch selectedUser changes and fetch user posts
 watch(selectedUser, () => {
   fetchUserPosts();
 });
 
+// Fungsi untuk menambahkan todo
+const addTodo = (todo) => {
+  todos.value.push(todo); // Menambahkan todo baru ke dalam array todos
+  console.log("Todo added:", todo); // Debugging
+};
+
+// Fungsi untuk menangani pengiriman formulir
+const handleSubmit = (newTodo) => {
+  if (newTodo && newTodo.trim() !== "") {
+    tempTodo.value = newTodo; // Menyimpan todo sementara yang diinputkan oleh pengguna
+    addTodo({
+      id: Date.now(),
+      title: newTodo,
+      completed: false,
+    }); // Memanggil fungsi untuk menambahkan todo ke dalam daftar
+    showAddTodoForm.value = false; // Menyembunyikan form setelah todo ditambahkan
+  } else {
+    alert("Todo tidak boleh kosong!");
+  }
+};
 </script>
-
-
-
 
 <style>
 body {
@@ -156,7 +126,6 @@ body {
   text-align: center;
   color: #333;
 }
-
 button.btn {
   margin: 10px;
   padding: 10px 20px;
