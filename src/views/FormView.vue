@@ -57,13 +57,17 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 
 const inputTask = ref('');
-const tasks = ref([]);
+const tasks = ref(JSON.parse(localStorage.getItem('tasks')) || []);
 const editingIndex = ref(null);
 const editedTaskTitle = ref('');
 const currentFilter = ref('all');
+
+const saveTasksToLocalStorage = () => {
+  localStorage.setItem('tasks', JSON.stringify(tasks.value));
+};
 
 const registerTask = () => {
   if (inputTask.value.trim() !== '') {
@@ -73,6 +77,7 @@ const registerTask = () => {
       finished: false,
     });
     inputTask.value = '';
+    saveTasksToLocalStorage();
   }
 };
 
@@ -95,15 +100,19 @@ const editTask = (index) => {
 const saveTask = (index) => {
   tasks.value[index].title = editedTaskTitle.value;
   editingIndex.value = null;
+  saveTasksToLocalStorage();
 };
 
 const deleteTask = (index) => {
   tasks.value.splice(index, 1);
+  saveTasksToLocalStorage();
 };
 
 const cancelEdit = () => {
   editingIndex.value = null;
 };
+
+watch(tasks, saveTasksToLocalStorage, { deep: true });
 </script>
 
 <style scoped>
@@ -121,7 +130,7 @@ const cancelEdit = () => {
   color: #000000;
   text-align: center; 
   position: relative; 
-  z-index: 0; /* Pastikan ini di bawah elemen interaktif */
+  z-index: 0; 
 }
 
 .form-container {
@@ -131,9 +140,9 @@ const cancelEdit = () => {
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  margin-top: 20px;
+  margin-top: 10px;
   position: relative;
-  z-index: 2; /* Z-index lebih tinggi dari latar belakang */
+  z-index: 2; 
 }
 
 .list-group-item {
@@ -142,7 +151,7 @@ const cancelEdit = () => {
   justify-content: space-between;
   background-color: rgba(0, 0, 0, 0.6); 
   color: #fff;
-  z-index: 2; /* Z-index lebih tinggi dari latar belakang */
+  z-index: 2; 
 }
 
 .title {
@@ -151,22 +160,22 @@ const cancelEdit = () => {
   text-transform: uppercase; 
   color: #000000;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4); 
-  margin-bottom: 30px; 
+  margin-bottom: 10px; 
   text-align: center; 
   letter-spacing: 1px; 
-  z-index: 2; /* Z-index lebih tinggi dari latar belakang */
+  z-index: 2; 
 }
 
 .row {
   display: flex;
   align-items: center;
   margin-bottom: 10px;
-  z-index: 2; /* Z-index lebih tinggi dari latar belakang */
+  z-index: 2; 
 }
 
 .col {
   flex: 1;
-  z-index: 2; /* Z-index lebih tinggi dari latar belakang */
+  z-index: 2; 
 }
 
 .form-control-lg {
@@ -175,7 +184,7 @@ const cancelEdit = () => {
   font-size: 1rem;
   line-height: 1.5;
   border-radius: .3rem;
-  z-index: 2; /* Z-index lebih tinggi dari latar belakang */
+  z-index: 2; 
 }
 
 .btn {
@@ -183,29 +192,29 @@ const cancelEdit = () => {
   height: 50px; 
   font-size: 0.80rem;
   padding: 0.5rem 1rem;
-  z-index: 2; /* Z-index lebih tinggi dari latar belakang */
+  z-index: 2; 
 }
 
 .add-todo-btn {
   width: 100%; 
-  z-index: 2; /* Z-index lebih tinggi dari latar belakang */
+  z-index: 2; 
 }
 
 .mt-4 {
   margin-top: 1rem;
-  z-index: 2; /* Z-index lebih tinggi dari latar belakang */
+  z-index: 2; 
 }
 
 .list-group {
   width: 100%;
-  z-index: 2; /* Z-index lebih tinggi dari latar belakang */
+  z-index: 2; 
 }
 
 .btn-edit {
   color: #fff;
   background-color: #6c757d; 
   border-color: #6c757d; 
-  z-index: 2; /* Z-index lebih tinggi dari latar belakang */
+  z-index: 2; 
 }
 
 .btn-edit:hover {
@@ -217,7 +226,7 @@ const cancelEdit = () => {
   color: #fff;
   background-color: #dc3545; 
   border-color: #dc3545; 
-  z-index: 2; /* Z-index lebih tinggi dari latar belakang */
+  z-index: 2; 
 }
 
 .btn-delete:hover {
@@ -229,7 +238,7 @@ const cancelEdit = () => {
   color: #fff;
   background-color: #14ff5f;
   border-color: #14ff5f; 
-  z-index: 2; /* Z-index lebih tinggi dari latar belakang */
+  z-index: 2; 
 }
 
 .btn-save:hover {
@@ -241,7 +250,7 @@ const cancelEdit = () => {
   color: #fff;
   background-color: #6c757d; 
   border-color: #6c757d; 
-  z-index: 2; /* Z-index lebih tinggi dari latar belakang */
+  z-index: 2;
 }
 
 .btn-cancel:hover {
@@ -253,7 +262,7 @@ const cancelEdit = () => {
   color: #fff;
   background-color: #cb2de7; 
   border-color: #cb2de7; 
-  z-index: 2; /* Z-index lebih tinggi dari latar belakang */
+  z-index: 2; 
 }
 
 .btn-success:hover {

@@ -150,7 +150,7 @@
     margin: 20px 0;
     width: 80%;
     max-width: 400px;
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(182, 175, 175, 0.705);
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
